@@ -25,8 +25,8 @@ export const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       {
-        path: "day/12",
-        element: <ChallengeDayPage />,
+        path: "/day/:dayNumber",
+        element: <ChallengeDayPage />
       },
     ],
   },

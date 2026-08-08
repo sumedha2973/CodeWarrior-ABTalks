@@ -1,73 +1,106 @@
 import { useState, useEffect } from "react";
-import { defaultStudentProfile, stateVariants } from "../data/mockData";
 
-export function useStudentState(dayNumber = 12) {
-  const [variantKey, setVariantKey] = useState("activeStreak");
-  const [githubUrl, setGithubUrl] = useState("");
-  const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
+const STORAGE_KEY = "abtalks_student_state_v1";
 
-  const [customCompletedDays, setCustomCompletedDays] = useState(null);
-  const [customStreak, setCustomStreak] = useState(null);
+const DEFAULT_STATE = {
+  completedDays: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  currentStreak: 11,
+  submissions: {},
+  checklists: {},
+};
+
+export function useStudentState() {
+  const [state, setState] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...DEFAULT_STATE,
+          ...parsed,
+          completedDays: Array.isArray(parsed.completedDays)
+            ? parsed.completedDays
+            : DEFAULT_STATE.completedDays,
+        };
+      }
+    } catch (e) {
+      console.error("Failed to load local storage state:", e);
+    }
+    return DEFAULT_STATE;
+  });
 
   useEffect(() => {
-    const savedSubmission = localStorage.getItem(`abtalks_day_${dayNumber}_submitted`);
-    const savedGithub = localStorage.getItem(`abtalks_day_${dayNumber}_github_url`);
-    const savedLinkedin = localStorage.getItem(`abtalks_day_${dayNumber}_linkedin_url`);
-
-    if (savedSubmission === "true") {
-      setIsSubmitted(true);
-      if (savedGithub) setGithubUrl(savedGithub);
-      if (savedLinkedin) setLinkedinUrl(savedLinkedin);
-
-      const savedDays = localStorage.getItem("abtalks_completed_days");
-      const savedStreak = localStorage.getItem("abtalks_current_streak");
-      if (savedDays) setCustomCompletedDays(parseInt(savedDays, 10));
-      if (savedStreak) setCustomStreak(parseInt(savedStreak, 10));
-    } else {
-      setIsSubmitted(false);
-      setGithubUrl("");
-      setLinkedinUrl("");
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error("Failed to save state to local storage:", e);
     }
-  }, [dayNumber]);
+  }, [state]);
 
-  const baseState = stateVariants[variantKey] || stateVariants.activeStreak;
+  const completedDays = state?.completedDays || DEFAULT_STATE.completedDays;
+  const completedCount = completedDays.length;
+  const activeDay = completedCount + 1;
 
-  const currentState = {
-    ...baseState,
-    totalDaysCompleted:
-      customCompletedDays !== null ? customCompletedDays : baseState.totalDaysCompleted,
-    currentStreak: customStreak !== null ? customStreak : baseState.currentStreak,
+  const toggleChecklistItem = (dayNumber, index) => {
+    setState((prev) => {
+      const currentList = prev.checklists?.[dayNumber] || [];
+      const updatedList = currentList.includes(index)
+        ? currentList.filter((i) => i !== index)
+        : [...currentList, index];
+
+      return {
+        ...prev,
+        checklists: {
+          ...(prev.checklists || {}),
+          [dayNumber]: updatedList,
+        },
+      };
+    });
   };
 
-  const handleSubmitProof = (e) => {
-    e.preventDefault();
-    if (!githubUrl || !linkedinUrl) return;
+  const submitProof = (dayNumber, githubUrl, linkedinUrl) => {
+    setState((prev) => {
+      const prevCompleted = prev.completedDays || [];
+      const isAlreadyCompleted = prevCompleted.includes(dayNumber);
+      const updatedCompleted = isAlreadyCompleted
+        ? prevCompleted
+        : [...prevCompleted, dayNumber].sort((a, b) => a - b);
 
-    const updatedDays = currentState.totalDaysCompleted + (isSubmitted ? 0 : 1);
-    const updatedStreak = currentState.currentStreak + (isSubmitted ? 0 : 1);
+      const updatedStreak = isAlreadyCompleted
+        ? prev.currentStreak
+        : (prev.currentStreak || 0) + 1;
 
-    setIsSubmitted(true);
-    setCustomCompletedDays(updatedDays);
-    setCustomStreak(updatedStreak);
+      return {
+        ...prev,
+        completedDays: updatedCompleted,
+        currentStreak: updatedStreak,
+        submissions: {
+          ...(prev.submissions || {}),
+          [dayNumber]: {
+            githubUrl,
+            linkedinUrl,
+            submittedAt: new Date().toISOString(),
+          },
+        },
+      };
+    });
+  };
 
-    localStorage.setItem(`abtalks_day_${dayNumber}_submitted`, "true");
-    localStorage.setItem(`abtalks_day_${dayNumber}_github_url`, githubUrl);
-    localStorage.setItem(`abtalks_day_${dayNumber}_linkedin_url`, linkedinUrl);
-    localStorage.setItem("abtalks_completed_days", updatedDays.toString());
-    localStorage.setItem("abtalks_current_streak", updatedStreak.toString());
+  const studentProfile = {
+    name: "ABTalks Student",
+    track: "Full Stack Web Development",
+    college: "ABES EC",
   };
 
   return {
-    studentProfile: defaultStudentProfile,
-    currentState,
-    variantKey,
-    setVariantKey,
-    githubUrl,
-    setGithubUrl,
-    linkedinUrl,
-    setLinkedinUrl,
-    isSubmitted,
-    handleSubmitProof,
+    studentProfile,
+    completedDays,
+    completedCount,
+    activeDay,
+    currentStreak: state?.currentStreak ?? 11,
+    submissions: state?.submissions || {},
+    checklists: state?.checklists || {},
+    toggleChecklistItem,
+    submitProof,
   };
 }

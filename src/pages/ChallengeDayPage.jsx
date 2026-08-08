@@ -1,132 +1,187 @@
-import React, { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { tasksByDay } from "../data/mockData";
 import { useStudentState } from "../hooks/useStudentState";
-import SubmissionForm from "../components/day/SubmissionForm";
-import { Clock, Code2, CheckSquare, Terminal, ArrowLeft, ShieldCheck } from "lucide-react";
+import { day12Task } from "../data/mockData";
+import {
+  Clock,
+  CheckCircle2,
+  Lock,
+  Code2,
+  Share2,
+  ArrowLeft,
+  Send,
+  Terminal,
+} from "lucide-react";
+
+// Dynamic task fallback for any day requested
+function getTaskForDay(dayNum) {
+  if (dayNum === 12) return day12Task;
+
+  return {
+    dayNumber: dayNum,
+    title: `Day ${dayNum}: Building Core Modules`,
+    track: "Full Stack Web Development",
+    difficulty: "Intermediate",
+    estimatedTime: "2-3 Hours",
+    description: `Complete Day ${dayNum} challenge tasks by building and testing key components. Submit your progress below.`,
+    requirements: [
+      `Implement feature functionality for Day ${dayNum}`,
+      "Ensure code passes all local test suites",
+      "Push code to GitHub repository",
+      "Share build update post on LinkedIn",
+    ],
+  };
+}
 
 export default function ChallengeDayPage() {
-  const { dayNumber } = useParams();
-  const currentDay = parseInt(dayNumber, 10) || 12;
-  const dayTask = tasksByDay[currentDay];
+  const { dayNumber: paramDay } = useParams();
+  const navigate = useNavigate();
+  
+  // Default fallback to active day or 12
+  const currentDayNum = parseInt(paramDay || "12", 10);
+  const task = getTaskForDay(currentDayNum);
 
   const {
-    githubUrl,
-    setGithubUrl,
-    linkedinUrl,
-    setLinkedinUrl,
-    isSubmitted,
-    handleSubmitProof,
-  } = useStudentState(currentDay);
+    activeDay,
+    completedDays,
+    submissions,
+    checklists,
+    toggleChecklistItem,
+    submitProof,
+  } = useStudentState();
 
-  const [checkedItems, setCheckedItems] = useState({});
+  const isCompleted = completedDays.includes(currentDayNum);
+  const isLocked = currentDayNum > activeDay;
 
-  if (!dayTask) {
+  const existingSubmission = submissions[currentDayNum] || {};
+  const [githubUrl, setGithubUrl] = useState(existingSubmission.githubUrl || "");
+  const [linkedinUrl, setLinkedinUrl] = useState(existingSubmission.linkedinUrl || "");
+
+  useEffect(() => {
+    if (existingSubmission.githubUrl) setGithubUrl(existingSubmission.githubUrl);
+    if (existingSubmission.linkedinUrl) setLinkedinUrl(existingSubmission.linkedinUrl);
+  }, [existingSubmission.githubUrl, existingSubmission.linkedinUrl]);
+
+  const currentChecklist = checklists[currentDayNum] || [];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!githubUrl.trim() || !linkedinUrl.trim()) return;
+
+    submitProof(currentDayNum, githubUrl.trim(), linkedinUrl.trim());
+
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 400);
+  };
+
+  if (isLocked) {
     return (
-      <div className="p-6 text-center space-y-4 max-w-md mx-auto">
-        <h1 className="text-lg font-black text-white">Day {currentDay} Challenge Not Found</h1>
-        <p className="text-xs text-neutral-400">This task is not available yet.</p>
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-400 hover:underline"
-        >
-          <ArrowLeft size={14} /> Back to Dashboard
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-md mx-auto space-y-6 pt-12 px-2 text-center"
+      >
+        <div className="flex justify-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-900 border border-neutral-800 text-neutral-500">
+            <Lock size={28} />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-xl font-black text-white">
+            Day {currentDayNum} is Locked
+          </h1>
+          <p className="text-xs text-neutral-400 max-w-xs mx-auto">
+            You must complete Day {activeDay} before accessing this challenge.
+          </p>
+        </div>
+        <Link to="/dashboard">
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-xs font-black uppercase text-neutral-950"
+          >
+            <ArrowLeft size={16} /> Return to Active Day
+          </motion.button>
         </Link>
-      </div>
+      </motion.div>
     );
   }
 
-  const toggleCheck = (idx) => {
-    setCheckedItems((prev) => ({ ...prev, [idx]: !prev[idx] }));
-  };
-
-  const completedCount = Object.values(checkedItems).filter(Boolean).length;
-  const totalCount = dayTask.requirements.length;
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
-      className="max-w-md mx-auto space-y-4 pb-8 px-1"
+      transition={{ duration: 0.25 }}
+      className="max-w-md mx-auto space-y-4 pb-12 px-1"
     >
-      {/* 1. MISSION HEADER (Day, Title & Meta) */}
-      <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/80 p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="rounded-md bg-cyan-950/90 px-2.5 py-0.5 text-[10px] font-mono font-black text-cyan-400 border border-cyan-800/60 uppercase tracking-wider">
-            DAY {dayTask.dayNumber} OF 60
-          </span>
-          <div className="flex items-center gap-2 text-[11px] font-medium text-neutral-400">
-            <span className="flex items-center gap-1">
-              <Clock size={12} className="text-cyan-400" /> {dayTask.estimatedTime}
-            </span>
-            <span>•</span>
-            <span className="text-amber-400 font-semibold">{dayTask.difficulty}</span>
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          <h1 className="text-lg font-black text-white tracking-tight leading-snug">
-            {dayTask.title}
-          </h1>
-          <p className="text-[11px] font-mono text-neutral-400 flex items-center gap-1">
-            <Code2 size={13} className="text-cyan-400" /> {dayTask.track}
-          </p>
-        </div>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+        <Link
+          to="/dashboard"
+          className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-white"
+        >
+          <ArrowLeft size={14} /> Back
+        </Link>
+        <span className="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-950/80 px-2.5 py-1 rounded-md border border-cyan-800/60 uppercase">
+          DAY {currentDayNum} OF 60
+        </span>
       </div>
 
-      {/* 2. OBJECTIVE */}
-      <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/80 p-4 space-y-2">
-        <h2 className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 flex items-center gap-1.5">
-          <Terminal size={12} className="text-cyan-400" /> Objective
-        </h2>
-        <p className="text-xs text-neutral-300 leading-relaxed font-normal">
-          {dayTask.description}
+      {/* Task Details */}
+      <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/80 p-4 space-y-3">
+        <div className="flex items-center justify-between text-[11px] text-neutral-400">
+          <span className="flex items-center gap-1">
+            <Clock size={12} className="text-cyan-400" /> {task.estimatedTime}
+          </span>
+          <span className="text-amber-400 font-semibold">{task.difficulty}</span>
+        </div>
+
+        <div>
+          <h1 className="text-lg font-black text-white">{task.title}</h1>
+          <p className="text-xs font-mono text-cyan-400 mt-1 flex items-center gap-1">
+            <Terminal size={12} /> {task.track}
+          </p>
+        </div>
+
+        <p className="text-xs text-neutral-300 leading-relaxed pt-1 border-t border-neutral-800/60">
+          {task.description}
         </p>
       </div>
 
-      {/* 3. REQUIREMENTS CHECKLIST */}
+      {/* Requirements Checklist */}
       <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/80 p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 flex items-center gap-1.5">
-            <CheckSquare size={12} className="text-cyan-400" /> Requirements
+        <div className="flex justify-between items-center border-b border-neutral-800 pb-2">
+          <h2 className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400">
+            Requirements
           </h2>
-          <span className="text-[10px] font-mono text-cyan-400 font-extrabold">
-            {completedCount}/{totalCount} Completed
+          <span className="text-[10px] font-mono text-cyan-400">
+            {currentChecklist.length} / {task.requirements.length} Completed
           </span>
         </div>
 
-        {/* Dynamic Progress Bar */}
-        <div className="h-1.5 w-full rounded-full bg-neutral-950 overflow-hidden border border-neutral-800">
-          <div
-            className="h-full bg-cyan-400 transition-all duration-300 ease-out shadow-[0_0_8px_rgba(34,211,238,0.4)]"
-            style={{ width: `${(completedCount / totalCount) * 100}%` }}
-          />
-        </div>
-
-        <div className="space-y-1.5 pt-1">
-          {dayTask.requirements.map((req, idx) => {
-            const isChecked = !!checkedItems[idx];
+        <div className="space-y-2">
+          {task.requirements.map((req, idx) => {
+            const checked = currentChecklist.includes(idx);
             return (
               <button
                 key={idx}
                 type="button"
-                onClick={() => toggleCheck(idx)}
-                className="w-full flex items-start gap-2.5 text-left text-xs transition-colors group py-1.5 px-2 rounded-lg hover:bg-neutral-800/40"
+                onClick={() => toggleChecklistItem(currentDayNum, idx)}
+                className="flex items-start gap-3 w-full text-left p-2 rounded-xl hover:bg-neutral-800/40 transition-colors"
               >
-                <span
+                <div
                   className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
-                    isChecked
-                      ? "bg-cyan-400 border-cyan-400 text-neutral-950 font-black text-[10px]"
-                      : "border-neutral-700 bg-neutral-950 group-hover:border-neutral-500"
+                    checked
+                      ? "bg-cyan-400 border-cyan-400 text-neutral-950"
+                      : "border-neutral-700 bg-neutral-950"
                   }`}
                 >
-                  {isChecked && "✓"}
-                </span>
+                  {checked && <CheckCircle2 size={12} className="stroke-[3]" />}
+                </div>
                 <span
-                  className={`leading-snug transition-colors ${
-                    isChecked ? "text-neutral-500 line-through" : "text-neutral-200"
+                  className={`text-xs ${
+                    checked ? "text-neutral-400 line-through" : "text-neutral-200"
                   }`}
                 >
                   {req}
@@ -137,20 +192,57 @@ export default function ChallengeDayPage() {
         </div>
       </div>
 
-      {/* 4. FINAL SUBMISSION STEP */}
-      <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-gradient-to-b from-neutral-900 to-neutral-950 p-4 space-y-3">
-        <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 border-b border-neutral-800/80 pb-2">
-          <ShieldCheck size={13} className="text-cyan-400" /> Final Step: Submit Proof
-        </div>
+      {/* Proof Submission Form */}
+      <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/80 p-4 space-y-4">
+        <h2 className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 flex items-center gap-1.5">
+          <CheckCircle2 size={13} className="text-cyan-400" /> Submit Proof
+        </h2>
 
-        <SubmissionForm
-          githubUrl={githubUrl}
-          setGithubUrl={setGithubUrl}
-          linkedinUrl={linkedinUrl}
-          setLinkedinUrl={setLinkedinUrl}
-          isSubmitted={isSubmitted}
-          handleSubmitProof={handleSubmitProof}
-        />
+        {isCompleted && (
+          <div className="p-3 rounded-xl bg-cyan-950/60 border border-cyan-800/60 text-xs text-cyan-300 font-medium flex items-center gap-2">
+            <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
+            <span>Proof submitted! Day {currentDayNum} verified.</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-[10px] font-mono uppercase text-neutral-400 flex items-center gap-1">
+              <Code2 size={12} className="text-cyan-400" /> GitHub Repository / Commit URL
+            </label>
+            <input
+              type="url"
+              required
+              value={githubUrl}
+              onChange={(e) => setGithubUrl(e.target.value)}
+              placeholder="https://github.com/username/repo"
+              className="w-full rounded-xl bg-neutral-950 border border-neutral-800 p-2.5 text-xs text-white placeholder-neutral-600 focus:border-cyan-400 focus:outline-none"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-mono uppercase text-neutral-400 flex items-center gap-1">
+              <Share2 size={12} className="text-cyan-400" /> LinkedIn Post URL
+            </label>
+            <input
+              type="url"
+              required
+              value={linkedinUrl}
+              onChange={(e) => setLinkedinUrl(e.target.value)}
+              placeholder="https://linkedin.com/posts/..."
+              className="w-full rounded-xl bg-neutral-950 border border-neutral-800 p-2.5 text-xs text-white placeholder-neutral-600 focus:border-cyan-400 focus:outline-none"
+            />
+          </div>
+
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            type="submit"
+            className="flex justify-center items-center gap-2 w-full rounded-xl bg-cyan-400 py-3 text-xs font-black uppercase text-neutral-950 hover:bg-cyan-300 transition-colors shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+          >
+            <Send size={14} />
+            <span>{isCompleted ? "Update Proof" : "Submit Today's Proof"}</span>
+          </motion.button>
+        </form>
       </div>
     </motion.div>
   );
