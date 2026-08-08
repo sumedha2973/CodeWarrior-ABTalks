@@ -7,17 +7,24 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-neutral-800 bg-neutral-950/80 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2 font-bold tracking-tight text-white">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
-            <Code2 size={18} />
+      <div className="mx-auto flex h-14 w-full max-w-md items-center justify-between px-4 md:max-w-4xl">
+        
+        {/* Logo */}
+        <Link
+          to="/"
+          className="flex items-center gap-2 shrink-0"
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-500/10">
+            <Code2 size={16} className="text-cyan-400" />
           </div>
-          <span className="text-lg font-black tracking-wider uppercase">
-            AB<span className="text-cyan-400">Talks</span>
+
+          <span className="text-sm font-black tracking-wide text-white">
+            AB<span className="text-cyan-400">TALKS</span>
           </span>
         </Link>
 
-        <nav className="flex items-center gap-3 text-sm font-medium">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-2 text-sm font-medium">
           <Link
             to="/dashboard"
             className={`px-3 py-1.5 rounded-md transition-colors ${
@@ -28,6 +35,7 @@ export default function Navbar() {
           >
             Dashboard
           </Link>
+
           <Link
             to="/day/12"
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
@@ -40,6 +48,13 @@ export default function Navbar() {
             Day 12
           </Link>
         </nav>
+
+        {/* Mobile status indicator */}
+        <div className="flex md:hidden items-center gap-1.5 text-[9px] font-mono uppercase tracking-wider text-cyan-400">
+          <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+          Active
+        </div>
+
       </div>
     </header>
   );

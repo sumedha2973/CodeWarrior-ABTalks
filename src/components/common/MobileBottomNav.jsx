@@ -6,10 +6,10 @@ export default function MobileBottomNav() {
   const location = useLocation();
 
   const navItems = [
-    { label: "Home", path: "/", icon: Home },
-    { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    { label: "Day 12", path: "/day/12", icon: Calendar },
-  ];
+  { label: "Home", path: "/", icon: Home },
+  { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { label: "Day 12", path: "/day/12", icon: Calendar },
+];
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-800 bg-neutral-950/90 backdrop-blur-md md:hidden">
