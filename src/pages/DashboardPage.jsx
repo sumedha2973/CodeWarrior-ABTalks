@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useStudentState } from "../hooks/useStudentState";
 import { day12Task, achievementsList } from "../data/mockData";
-
 import {
   Trophy,
   Clock,
@@ -11,7 +10,6 @@ import {
   Flame,
   Award,
   CheckCircle2,
-  Circle,
   Target,
   Code2,
   Share2,
@@ -26,21 +24,27 @@ export default function DashboardPage() {
     streakStatus,
     demoState,
     changeDemoState,
+    submissions,
   } = useStudentState();
 
-  const isEmptyProfile =
-    !studentProfile.name &&
-    !studentProfile.track &&
-    !studentProfile.college;
+  const displayName = studentProfile.name || "Developer";
+  const displayTrack = studentProfile.track || "Choose a track";
+  const displayCollege = studentProfile.college || "College not added";
 
-  const displayName =
-    studentProfile.name || "Developer";
+  /*
+   * The active day is the NEXT day to complete.
+   * Therefore the most recently completed day is activeDay - 1.
+   */
+  const lastCompletedDay = completedCount > 0 ? activeDay - 1 : null;
 
-  const displayTrack =
-    studentProfile.track || "Choose a track";
+  const lastSubmission =
+    lastCompletedDay && submissions
+      ? submissions[lastCompletedDay]
+      : null;
 
-  const displayCollege =
-    studentProfile.college || "College not added";
+  const hasProof =
+    !!lastSubmission?.githubUrl ||
+    !!lastSubmission?.linkedinUrl;
 
   return (
     <motion.div
@@ -52,7 +56,6 @@ export default function DashboardPage() {
       {/* =====================================================
           1. PROFILE & STREAK HUD
       ====================================================== */}
-
       <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/80 p-4 space-y-3">
         <div className="flex items-center gap-3">
           {/* Avatar */}
@@ -136,9 +139,8 @@ export default function DashboardPage() {
       </div>
 
       {/* =====================================================
-          STREAK STATUS
+          2. STREAK STATUS
       ====================================================== */}
-
       {streakStatus === "missed" && (
         <motion.div
           initial={{ opacity: 0, y: -5 }}
@@ -157,9 +159,8 @@ export default function DashboardPage() {
               </p>
 
               <p className="text-[10px] text-neutral-400 mt-0.5 leading-relaxed">
-                You missed yesterday's task.
-                Complete today's challenge to
-                start your streak again.
+                You missed yesterday's task. Complete today's
+                challenge to start your streak again.
               </p>
             </div>
           </div>
@@ -184,9 +185,8 @@ export default function DashboardPage() {
               </p>
 
               <p className="text-[10px] text-neutral-400 mt-0.5 leading-relaxed">
-                Welcome to ABTalks. Complete your
-                first challenge today and start your
-                60-day journey.
+                Welcome to ABTalks. Complete your first challenge
+                today and start your 60-day journey.
               </p>
             </div>
           </div>
@@ -194,9 +194,8 @@ export default function DashboardPage() {
       )}
 
       {/* =====================================================
-          2. TODAY'S MISSION
+          3. TODAY'S MISSION
       ====================================================== */}
-
       <motion.div
         whileHover={{ scale: 1.01 }}
         transition={{
@@ -213,11 +212,7 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-2 text-[11px] text-neutral-400 font-medium">
             <span className="flex items-center gap-1">
-              <Clock
-                size={12}
-                className="text-cyan-400"
-              />
-
+              <Clock size={12} className="text-cyan-400" />
               {day12Task.estimatedTime}
             </span>
 
@@ -231,19 +226,19 @@ export default function DashboardPage() {
 
         <div className="space-y-1.5">
           <h2 className="text-lg font-black text-white tracking-tight leading-snug">
-            {activeDay > 12
-              ? `Day ${activeDay} Challenge`
-              : activeDay === 1
+            {activeDay === 1
               ? "Environment Setup & Hello World"
-              : day12Task.title}
+              : activeDay === 12
+              ? day12Task.title
+              : `Day ${activeDay} Challenge`}
           </h2>
 
           <p className="text-xs text-neutral-400 leading-relaxed line-clamp-2">
-            {activeDay > 12
-              ? `Continue your 60-day streak by completing Day ${activeDay} challenge requirements.`
-              : activeDay === 1
+            {activeDay === 1
               ? "Set up your development environment and create your first project."
-              : day12Task.description}
+              : activeDay === 12
+              ? day12Task.description
+              : `Continue your 60-day streak by completing Day ${activeDay} challenge requirements.`}
           </p>
         </div>
 
@@ -264,9 +259,98 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* =====================================================
-          3. 60-DAY PROGRESS
+          4. LATEST PROOF OF WORK
       ====================================================== */}
+      {hasProof && lastCompletedDay && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border border-cyan-500/20 bg-neutral-900/80 p-4 space-y-3"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle2
+                size={15}
+                className="text-cyan-400"
+              />
 
+              <h2 className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400">
+                Latest Proof of Work
+              </h2>
+            </div>
+
+            <span className="text-[9px] font-mono text-cyan-400">
+              DAY {lastCompletedDay}
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            {/* GitHub */}
+            {lastSubmission?.githubUrl && (
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-neutral-800 bg-neutral-950/60 p-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Code2
+                    size={15}
+                    className="text-cyan-400 shrink-0"
+                  />
+
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-neutral-200">
+                      GitHub
+                    </p>
+
+                    <p className="text-[9px] text-neutral-500 truncate">
+                      {lastSubmission.githubUrl}
+                    </p>
+                  </div>
+                </div>
+
+                <span className="text-[9px] font-bold text-cyan-400 shrink-0">
+                  ✓ Submitted
+                </span>
+              </div>
+            )}
+
+            {/* LinkedIn */}
+            {lastSubmission?.linkedinUrl && (
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-neutral-800 bg-neutral-950/60 p-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Share2
+                    size={15}
+                    className="text-cyan-400 shrink-0"
+                  />
+
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-neutral-200">
+                      LinkedIn
+                    </p>
+
+                    <p className="text-[9px] text-neutral-500 truncate">
+                      {lastSubmission.linkedinUrl}
+                    </p>
+                  </div>
+                </div>
+
+                <span className="text-[9px] font-bold text-cyan-400 shrink-0">
+                  ✓ Submitted
+                </span>
+              </div>
+            )}
+          </div>
+
+          <Link
+            to={`/day/${lastCompletedDay}`}
+            className="flex items-center justify-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 text-[10px] font-bold text-neutral-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
+          >
+            View Day {lastCompletedDay} Proof
+            <ArrowRight size={12} />
+          </Link>
+        </motion.div>
+      )}
+
+      {/* =====================================================
+          5. 60-DAY PROGRESS
+      ====================================================== */}
       <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/80 p-4 space-y-2.5">
         <div className="flex justify-between items-center text-xs">
           <span className="font-bold uppercase tracking-wider text-[10px] text-neutral-400">
@@ -300,14 +384,15 @@ export default function DashboardPage() {
             ? "Your journey starts today. Complete your first challenge to begin."
             : completedCount >= 60
             ? "Challenge complete. You built a 60-day record of consistency."
-            : "Keep building every day to lock in your certification."}
+            : `You've completed ${completedCount} day${
+                completedCount === 1 ? "" : "s"
+              }. Keep building every day.`}
         </p>
       </div>
 
       {/* =====================================================
-          4. QUICK FOCUS
+          6. QUICK FOCUS
       ====================================================== */}
-
       <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/70 p-4 space-y-3">
         <div className="flex items-center gap-2">
           <Target
@@ -322,7 +407,7 @@ export default function DashboardPage() {
 
         <div className="grid gap-2">
           <div className="flex items-center gap-2.5 rounded-lg border border-neutral-800/80 bg-neutral-950/60 p-2.5">
-            <Circle
+            <Target
               size={15}
               className="text-cyan-400 shrink-0"
             />
@@ -375,9 +460,8 @@ export default function DashboardPage() {
       </div>
 
       {/* =====================================================
-          5. ACHIEVEMENTS
+          7. ACHIEVEMENTS
       ====================================================== */}
-
       <div className="space-y-2">
         <h2 className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-500 flex items-center gap-1.5 px-0.5">
           <Trophy
@@ -422,9 +506,8 @@ export default function DashboardPage() {
       </div>
 
       {/* =====================================================
-          6. DEMO PREVIEW
+          8. DEMO PREVIEW
       ====================================================== */}
-
       <div className="rounded-2xl border border-neutral-800/80 bg-neutral-950/70 p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div>
@@ -444,33 +527,18 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-2 gap-2">
           {[
-            {
-              id: "active",
-              label: "Active",
-            },
-            {
-              id: "firstDay",
-              label: "First Day",
-            },
-            {
-              id: "missed",
-              label: "Missed",
-            },
-            {
-              id: "empty",
-              label: "Empty Profile",
-            },
+            { id: "active", label: "Active" },
+            { id: "firstDay", label: "First Day" },
+            { id: "missed", label: "Missed" },
+            { id: "empty", label: "Empty Profile" },
           ].map((option) => {
-            const isSelected =
-              demoState === option.id;
+            const isSelected = demoState === option.id;
 
             return (
               <button
                 key={option.id}
                 type="button"
-                onClick={() =>
-                  changeDemoState(option.id)
-                }
+                onClick={() => changeDemoState(option.id)}
                 className={`rounded-lg border px-3 py-2 text-[10px] font-bold transition-all ${
                   isSelected
                     ? "border-cyan-400/50 bg-cyan-400/10 text-cyan-400"

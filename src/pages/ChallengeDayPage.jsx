@@ -66,15 +66,18 @@ export default function ChallengeDayPage() {
   const currentChecklist = checklists[currentDayNum] || [];
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!githubUrl.trim() || !linkedinUrl.trim()) return;
+  e.preventDefault();
 
-    submitProof(currentDayNum, githubUrl.trim(), linkedinUrl.trim());
+  if (!githubUrl.trim() || !linkedinUrl.trim()) return;
 
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 400);
-  };
+  submitProof(
+    currentDayNum,
+    githubUrl.trim(),
+    linkedinUrl.trim()
+  );
+
+  navigate("/dashboard");
+};
 
   if (isLocked) {
     return (

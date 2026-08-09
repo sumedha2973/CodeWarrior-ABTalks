@@ -94,10 +94,7 @@ export function useStudentState() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(state)
-      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (error) {
       console.error("Failed to save student state:", error);
     }
@@ -105,74 +102,60 @@ export function useStudentState() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(
-        DEMO_STATE_KEY,
-        demoState
-      );
+      localStorage.setItem(DEMO_STATE_KEY, demoState);
     } catch (error) {
       console.error("Failed to save demo state:", error);
     }
   }, [demoState]);
 
   /*
-   * DEMO STATE
-   * ---------------------------------------------
-   * Used only to demonstrate the required edge
-   * cases from the problem statement.
+   * STATE COMPUTATION
+   * Use state if customized/submitted; fallback to demo state for preview tabs
    */
+  const isCustomOrUpdated =
+    state.completedDays.length > 11 || Object.keys(state.submissions).length > 0;
 
-  const variant =
-    DEMO_STATES[demoState] || DEMO_STATES.active;
+  const variant = DEMO_STATES[demoState] || DEMO_STATES.active;
 
   const effectiveCompletedDays =
-    variant.completedDays;
+    isCustomOrUpdated && demoState === "active"
+      ? state.completedDays
+      : variant.completedDays;
 
-  const completedCount =
-    effectiveCompletedDays.length;
+  const completedCount = effectiveCompletedDays.length;
 
-  const activeDay =
-    completedCount >= 60
-      ? 60
-      : completedCount + 1;
+  const activeDay = completedCount >= 60 ? 60 : completedCount + 1;
 
   const currentStreak =
-    variant.currentStreak;
+    isCustomOrUpdated && demoState === "active"
+      ? state.currentStreak
+      : variant.currentStreak;
 
-  const missedYesterday =
-    variant.missedYesterday;
+  const missedYesterday = variant.missedYesterday;
 
   let streakStatus = "active";
 
   if (missedYesterday) {
     streakStatus = "missed";
-  } else if (
-    currentStreak === 0 &&
-    completedCount === 0
-  ) {
+  } else if (currentStreak === 0 && completedCount === 0) {
     streakStatus = "start";
   }
 
   /*
    * PROFILE
    */
-
   const studentProfile = {
-    name: variant.profile?.name || "",
-    track: variant.profile?.track || "",
-    college: variant.profile?.college || "",
+    name: variant.profile?.name || state.profile?.name || "",
+    track: variant.profile?.track || state.profile?.track || "",
+    college: variant.profile?.college || state.profile?.college || "",
   };
 
   /*
    * CHECKLIST
    */
-
-  const toggleChecklistItem = (
-    dayNumber,
-    index
-  ) => {
+  const toggleChecklistItem = (dayNumber, index) => {
     setState((prev) => {
-      const currentList =
-        prev.checklists?.[dayNumber] || [];
+      const currentList = prev.checklists?.[dayNumber] || [];
 
       const updatedList = currentList.includes(index)
         ? currentList.filter((i) => i !== index)
@@ -191,41 +174,29 @@ export function useStudentState() {
   /*
    * SUBMIT PROOF
    */
-
-  const submitProof = (
-    dayNumber,
-    githubUrl,
-    linkedinUrl
-  ) => {
+  const submitProof = (dayNumber, githubUrl, linkedinUrl) => {
     setState((prev) => {
-      const previousCompleted =
-        prev.completedDays || [];
+      const prevCompleted = Array.isArray(prev.completedDays)
+        ? prev.completedDays
+        : [];
 
-      const alreadyCompleted =
-        previousCompleted.includes(dayNumber);
+      const isAlreadyCompleted = prevCompleted.includes(dayNumber);
 
-      const updatedCompleted = alreadyCompleted
-        ? previousCompleted
-        : [...previousCompleted, dayNumber].sort(
-            (a, b) => a - b
-          );
-
-      const updatedStreak = alreadyCompleted
-        ? prev.currentStreak
-        : (prev.currentStreak || 0) + 1;
+      const updatedCompleted = isAlreadyCompleted
+        ? prevCompleted
+        : [...prevCompleted, dayNumber].sort((a, b) => a - b);
 
       return {
         ...prev,
 
         completedDays: updatedCompleted,
 
-        currentStreak: updatedStreak,
-
-        missedYesterday: false,
+        currentStreak: isAlreadyCompleted
+          ? prev.currentStreak
+          : (prev.currentStreak || 0) + 1,
 
         submissions: {
           ...(prev.submissions || {}),
-
           [dayNumber]: {
             githubUrl,
             linkedinUrl,
@@ -239,10 +210,8 @@ export function useStudentState() {
   /*
    * CHANGE DEMO STATE
    */
-
   const changeDemoState = (nextState) => {
     if (!DEMO_STATES[nextState]) return;
-
     setDemoState(nextState);
   };
 
