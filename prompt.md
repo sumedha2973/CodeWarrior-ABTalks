@@ -1,908 +1,540 @@
-You are the lead frontend engineer and product designer for a hackathon project.
+# ABTalks 60-Day Coding Challenge — Build Prompt
 
-We are building **Problem Statement 1: “Redesign ABTalks”**.
+## Role
 
-## PRODUCT CONTEXT
+You are an expert product designer and frontend engineer. Build a polished, mobile-first web experience for **ABTalks**, a 60-day coding challenge platform for Indian college students.
 
-ABTalks runs a **60-day coding challenge for Indian college students**.
+The goal is not to build a generic dashboard. The product should feel like a real, thoughtfully designed student challenge platform that is motivating, credible, fast, and easy to use on a phone.
 
-Students choose a track, build something every day, and maintain a public learning streak by submitting:
+---
 
-* A GitHub commit/repository
-* A LinkedIn post
+## Product Context
 
-The current product works, but the brief says:
+ABTalks runs a **60-day coding challenge**.
 
-> “The product works. It has never been designed.”
+Students:
 
-Our goal is to redesign the experience into a polished, modern, motivating product that feels like something ABTalks could actually ship.
+1. Choose a development track.
+2. Complete one practical coding task every day.
+3. Push proof of their work to GitHub.
+4. Share their learning/progress on LinkedIn.
+5. Build a public record of consistency over 60 days.
 
-## REQUIRED ROUTES
+The platform is primarily used on **mobile phones**, often late at night after college.
 
-We MUST build exactly these core routes:
+The product already works conceptually; your job is to make the experience feel designed.
 
-1. `/` — Landing Page
-2. `/dashboard` — Student Dashboard
-3. `/day/12` — Challenge Day
+---
 
-The submission requires the following Route Map in this exact order:
+# Required Routes
 
+Build exactly these primary routes:
+
+```text
 /
 /dashboard
 /day/12
+```
 
-Do not change these route paths.
+Do not add unnecessary authentication flows, recruiter dashboards, admin panels, or backend infrastructure.
 
-## REQUIREMENTS
-
-### 1. Landing Page `/`
-
-This is the first experience for a student who has never heard of ABTalks.
-
-It should communicate:
-
-* What the 60-day challenge is
-* Why a student should join
-* How the challenge works
-* Trust/credibility
-* Motivation to commit to 60 days
-* A clear primary CTA
-
-The page should feel exciting and memorable without becoming visually chaotic.
-
-### 2. Student Dashboard `/dashboard`
-
-This is the student's home screen after joining the challenge.
-
-It should include:
-
-* Current streak
-* Today's task
-* Progress through the challenge
-* Overall completion
-* Student standing and/or achievements
-
-It must also handle realistic states such as:
-
-* First day with no streak
-* A missed day
-* Empty profile
-
-### 3. Challenge Day `/day/12`
-
-This is the complete experience for one challenge day.
-
-The student should be able to:
-
-* Read the day's task
-* Understand what needs to be built
-* See useful task information
-* Submit GitHub repository/commit proof
-* Submit LinkedIn post proof
-
-Authentication, real accounts, and a production database are NOT required.
+Authentication is **out of scope**.
 
 Use realistic mocked data.
 
-## DESIGN DIRECTION
+---
 
-The product must be **mobile-first**.
+# Screen 1 — Landing Page `/`
 
-The evaluator will open the submission at **390px width**, so mobile is the primary design target. Desktop is secondary.
+The landing page is the first experience for a student who has never heard of ABTalks.
 
-We want a design that is:
+It must immediately answer:
 
-* Premium
-* Modern
-* Energetic
-* Motivating
-* Clean
-* Highly polished
-* Distinctive rather than looking like a generic dashboard template
+- What is ABTalks?
+- What is the 60-day challenge?
+- What does the student actually have to do?
+- Why should they participate?
+- What will they gain?
 
-Use strong visual hierarchy and intentional spacing.
+## Visual Direction
 
-We are interested in tasteful visual storytelling and subtle motion.
+Create a modern developer-focused interface.
 
-A limited amount of 3D/depth is welcome if it improves the product experience. Do NOT turn the entire interface into a heavy 3D/WebGL experience.
+Preferred visual language:
 
-The visual language should relate naturally to:
+- Dark background
+- Cyan/teal accent
+- Developer/terminal aesthetic
+- Strong typography
+- Subtle gradients
+- Glass/blur effects where useful
+- Micro-interactions
+- Motion that feels intentional rather than excessive
+- A subtle 3D/depth effect in the hero section
+- Responsive layout optimized for 390px first
 
-* Coding
-* Progress
-* Building
-* Consistency
-* Streaks
-* A 60-day journey
+Avoid making the page look like a generic SaaS template.
 
-Avoid random decorative elements that have nothing to do with the product.
+## Suggested Landing Structure
 
-## TECH STACK
+### Hero
 
-Use:
+Include:
 
-* React
-* Vite
-* JavaScript
-* Tailwind CSS
-* React Router
-* Lucide React
-* Framer Motion
+- ABTalks branding
+- Strong headline around the 60-day coding challenge
+- Short explanation
+- Primary CTA leading to `/dashboard`
+- Animated/depth visual representing the 60-day journey
 
-Use additional libraries only when there is a clear reason. Do not introduce unnecessary dependencies.
+### 60-Day Journey
 
-There is NO requirement for:
+Show all 60 days visually.
 
-* Backend
-* Database
-* Authentication
-* Real user accounts
-* External AI APIs
-* Real GitHub integration
-* Real LinkedIn integration
-
-Use local mocked data.
-
-## IMPORTANT ENGINEERING RULES
-
-Before changing anything:
-
-1. Inspect the existing project structure and existing dependencies.
-2. Do not delete or rewrite unrelated files.
-3. Reuse existing setup when appropriate.
-4. Keep the architecture simple and hackathon-friendly.
-5. Make sure the project can be deployed easily.
-6. Ensure all three required routes work directly.
-7. Avoid hardcoding the UI in a way that makes future refinement difficult.
-8. Keep mocked data separate from UI components.
-9. Make the application responsive, with **390px as the primary target**.
-10. Avoid unnecessary backend infrastructure.
-
-## FOLDER STRUCTURE
-
-Establish a clean, scalable frontend structure appropriate for this small application.
-
-Prefer a structure along these lines, adapting it to the existing project if necessary:
-
-src/
-assets/
-components/
-data/
-pages/
-layouts/
-routes/
-hooks/
-utils/
-
-Do not create folders simply for the sake of having more folders. Keep the structure practical.
-
-## MOCK DATA
-
-Create realistic mock data for:
-
-* Student profile
-* Current streak
-* Challenge progress
-* Daily tasks
-* Achievements
-* GitHub proof
-* LinkedIn proof
-* Missed-day state
-* First-day state
-
-The data should be easy to modify later.
-
-## IMPORTANT
-
-At this stage, DO NOT try to build the final polished UI.
-
-First:
-
-1. Inspect the project.
-2. Set up/verify the required technology stack.
-3. Establish the folder structure.
-4. Configure the required routes.
-5. Create the mock data structure.
-6. Create basic page/component placeholders.
-7. Verify that `/`, `/dashboard`, and `/day/12` all load correctly.
-8. Verify there are no build/runtime errors.
-
-After completing this foundation, STOP.
-
-Do not continue into extensive visual design yet.
-
-At the end, briefly report:
-
-* What you changed
-* Final folder structure
-* Installed/used dependencies
-* How to run the project
-* Whether all three routes work
-* Any issues or decisions that need attention before we begin the UI design
-
-
-# PROMPT 2
-Now move from the foundation into the actual product design and implementation.
-Do not change the existing architecture or required routes unless absolutely necessary.
-The goal is to make this feel like a real, premium product that ABTalks could ship, not a generic AI-generated dashboard.
-
-DESIGN GOAL
-ABTalks is a 60-day coding challenge.
-The emotional journey should be:
-Discover → Commit → Build → Prove → Progress → Continue
-The design should make a student feel:
-
-“I can actually do this for 60 days.”
-The product should feel energetic and motivating, but still professional and trustworthy.
-Think of the quality bar as a polished modern startup/product website rather than a typical student dashboard.
-Do NOT copy an existing website.
-Create an original visual identity specifically for ABTalks.
-
-VISUAL DIRECTION
-Use a combination of:
-
-Premium modern SaaS aesthetics
-Strong typography
-Excellent spacing and hierarchy
-Subtle depth
-Strong cards and surfaces
-Smooth micro-interactions
-Purposeful motion
-Coding/progress visual language
-The interface should feel designed, not decorated.
-Avoid:
-
-Generic gradient-heavy AI websites
-Excessive glassmorphism
-Random floating blobs
-Excessive rounded cards
-Excessive shadows
-Random 3D objects
-Stock illustrations
-Unnecessary animations
-Visually noisy dashboards
-Huge walls of text
-3D / DEPTH
-We want ONE memorable visual element that can create a “wow” moment.
-Explore using 3D/depth around the concept of the 60-day journey.
-Possible directions include:
-
-A dimensional “60”
-A 3D progress object
-A streak flame with depth
-A visual journey/path
-Layered code/progress elements
-Choose ONE strong direction rather than combining everything.
-The 3D/depth element should support the ABTalks concept.
-Do NOT introduce a heavy WebGL/Three.js implementation unless it provides a clear benefit.
-Prefer lightweight CSS/SVG/depth techniques where they can achieve the desired result.
-Most importantly:
-The UI must still look excellent if the 3D/motion is not running.
-
-MOBILE-FIRST REQUIREMENT
-This is critical.
-The evaluator will open the site at:
-390px width
-Design the mobile experience FIRST.
-Do not design desktop first and then squeeze it into mobile.
-At 390px:
-
-No horizontal overflow
-No clipped text
-No elements extending outside the viewport
-Buttons must be comfortably tappable
-Text must remain readable
-Cards must not become unnecessarily tall
-Important information should appear above the fold when possible
-Navigation must remain usable
-Visual effects must not consume the entire screen
-Desktop should enhance the experience rather than define it.
-
-LANDING PAGE /
-This is the first impression.
-The student has never heard of ABTalks.
-Within a few seconds they should understand:
-What is ABTalks?
-A 60-day build challenge for students.
-Why should I care?
-It turns daily coding into visible proof of work.
-What do I do?
-Build something every day and submit proof.
-Create a visually strong hero section.
-Possible messaging direction:
-60 DAYS.
-BUILD EVERY DAY.
-Supporting idea:
-
-Turn your coding consistency into proof of work.
-Use a strong primary CTA such as:
-Start the 60-Day Challenge
-Then visually communicate the journey from Day 1 → Day 60.
-Include enough supporting information to establish trust and explain the challenge, but do not create a giant landing page.
-The mobile screenshot must feel intentional and immediately understandable.
-
-DASHBOARD /dashboard
-The dashboard should NOT look like a collection of statistics.
-The student's current journey should be the visual focus.
-Prioritize:
-
-Current streak
-Today's mission
-Challenge progress
-Overall completion
-Achievements / standing
-Create a strong hero/dashboard header such as:
-12
-DAY STREAK
-Then:
-Day 12 of 60
-Show progress visually.
-The current task should be highly actionable.
 Example:
 
-TODAY'S BUILD
-Build a responsive pricing page
-45 min · Web Development
-[Continue today's challenge]
-The student should immediately know:
+- Completed days
+- Current day
+- Upcoming days
 
-What they need to do
-How much progress they've made
-What they should do next
-Also show a compact journey/progress visualization.
-Avoid filling the page with statistics that don't help the student act.
+The visual should make the challenge feel tangible.
 
-THOUGHTFUL UX IDEA
-The brief explicitly requires at least one thoughtful idea that improves the student experience.
-Implement a concept that clearly separates:
-Progress from streak.
-For example:
-A student who misses a day should NOT feel that all their progress disappeared.
-Show something like:
-Current streak
-0 days
-Challenge progress
-12 / 60 days completed
-If a day was missed:
+### How It Works
 
-Missed yesterday? Keep going.
-Your streak paused, but your progress is still here.
-This should feel encouraging without being childish.
-Do not punish the student visually.
+Explain the journey in approximately four steps:
 
-EDGE STATES
-The UI must support the mock states already created in userStateVariants.js.
-Design these states intentionally:
+1. Choose a track
+2. Complete the daily mission
+3. Submit GitHub + LinkedIn proof
+4. Build a visible developer identity
 
-First Day
-0-day streak
-Day 1 of 60
-Clear explanation of how to begin
-No fake achievements
-Motivating first action
-Active Streak
-Current streak prominently visible
-Today's task
-Progress
-Achievements
-Missed Day
-Clearly communicate what happened
-Preserve total progress
-Explain how to continue
-Do not make the interface look broken
-CHALLENGE DAY /day/12
-This should feel like a focused workspace rather than another dashboard.
-The student should immediately understand:
-What am I building?
-Why am I building it?
-What exactly must I submit?
-Create a strong hierarchy:
-DAY 12
+### What Students Gain
 
-Build a responsive pricing page
-Then:
-
-Estimated time
-Track
-Difficulty
-Mission description
-Requirements/checklist
-Optional hints/resources
-Then a dedicated proof-of-work section.
-
-GITHUB PROOF
-Input for repository/commit URL.
-
-LINKEDIN PROOF
-Input for LinkedIn post URL.
-Then a prominent:
-Submit today's proof
-After submission, provide a satisfying completion state.
-The page should make completing Day 12 feel like an accomplishment.
-
-MOTION
-Use Framer Motion carefully.
-Motion should communicate:
-
-progress
-state changes
-completion
-interaction
-hierarchy
 Examples:
 
-subtle entrance animations
-progress animation
-card hover/tap states
-completion celebration
-smooth page transitions
-Do NOT animate every element.
-Avoid animations that make the page slower or interfere with readability.
+- Consistent coding habit
+- 60-day public coding streak
+- Real projects
+- GitHub portfolio
+- LinkedIn proof of work
 
-COMPONENT QUALITY
-Keep the components reusable.
-Do not create one giant component containing the entire page.
-Reuse existing components where appropriate.
-If new components are needed, place them in logical folders.
-Keep mock data separate from presentation.
+Keep the content concise because the main viewport is mobile.
 
-RESPONSIVE TESTING
-After implementing the design:
-Test all three routes at approximately:
+---
 
-390px
-768px
-desktop width
-The 390px version is the highest priority.
-Look specifically for:
+# Screen 2 — Student Dashboard `/dashboard`
 
-horizontal overflow
-text wrapping problems
-oversized elements
-broken navigation
-buttons becoming difficult to tap
-excessive vertical scrolling
-visual hierarchy problems
-IMPORTANT
-Do NOT stop at making the pages technically functional.
-Actually implement the visual design.
-Use the existing mocked data.
-Do not add authentication, backend, database, external APIs, or unnecessary functionality.
-Do not modify the required route paths.
-At the end, report:
+The dashboard is the student's home screen after entering the challenge.
 
-What visual system you implemented
-What 3D/depth approach you chose and why
-What thoughtful UX improvement you implemented
-Any new components created
-Any dependencies added
-Whether all three routes were tested at 390px
-Any remaining visual issues
+It should answer:
 
+> "What do I need to do today?"
 
-# PROMPT 3
-We are now going to implement the actual React project.
+## Required Information
 
-I already created an empty Vite + React project locally.
+Display:
 
-IMPORTANT:
-Do NOT generate a conceptual image or mockup.
-We are now writing the actual source code.
-
-The project uses:
-
-- React
-- Vite
-- JavaScript
-- react-router-dom
-- Tailwind CSS
-- framer-motion
-- lucide-react
-- clsx
-- tailwind-merge
-
-The project is for Hackathon Problem Statement 1: "Redesign ABTalks".
-
-REQUIRED ROUTES:
-
-/
- /dashboard
- /day/12
-
-These exact routes must remain unchanged.
-
-PRODUCT:
-
-ABTalks runs a 60-day coding challenge for Indian college students.
-
-Students:
-- choose a track
-- build something every day
-- submit a GitHub commit/repository
-- submit a LinkedIn post
-- maintain a public learning streak
-
-The product should make consistency and proof of work feel rewarding.
-
-REQUIRED SCREENS:
-
-LANDING PAGE `/`
-
-A first-time student should immediately understand:
-
-- What ABTalks is
-- What the 60-day challenge is
-- How it works
-- Why it is valuable
-- A strong CTA to start
-
-DASHBOARD `/dashboard`
-
-Show:
-
+- Student name
+- Track
+- College
 - Current streak
+- Current challenge day
 - Today's task
-- Challenge progress
-- Overall completion
-- Achievements / student standing
-
-It must support mocked states for:
-
-- First day
-- Active streak
-- Missed day
-- Empty profile
-
-CHALLENGE DAY `/day/12`
-
-Show:
-
-- Day 12
-- Task title
-- Description
 - Estimated time
+- Difficulty
+- Overall 60-day progress
+- Completion count
+- Achievements/milestones
+- Clear action to open today's challenge
+
+## Thoughtful UX Idea
+
+Include a small **"Today's Focus"** workflow that turns the challenge into three concrete actions:
+
+```text
+Build → Commit → Share
+```
+
+This is useful because the challenge is not only about finishing a coding task; students also need to produce public proof of work.
+
+The dashboard should make the daily workflow obvious without requiring the student to figure it out.
+
+---
+
+# Required Edge States
+
+The dashboard must account for these realistic states.
+
+## State 1 — First Day / 0-Day Streak
+
+A brand-new student should see something like:
+
+- Streak: 0
+- Day 1 / 60
+- "Start Your Streak"
+- Day 1 task
+- Progress: 0 / 60
+
+Do not make a new student look as if they have already completed several days.
+
+## State 2 — Active Streak
+
+Example:
+
+- Streak: 12
+- Day 13 / 60
+- Positive but restrained status
+- Progress updated accordingly
+
+The UI should clearly communicate momentum.
+
+## State 3 — Missed Day
+
+Show explicit feedback such as:
+
+- Streak broken
+- Yesterday's task was missed
+- Current streak reset
+- Clear CTA to complete today's task and restart
+
+Do not hide the missed-day state.
+
+## State 4 — Empty Profile
+
+Handle missing information gracefully.
+
+For example:
+
+- Default avatar/initial
+- "Developer" or another neutral fallback name
+- "Choose a track"
+- "College not added"
+
+The layout must remain visually clean even when profile information is absent.
+
+---
+
+# Demo State Testing
+
+Because this is a mocked-data challenge, provide a simple development/demo mechanism that allows the four states to be tested:
+
+```text
+Active
+First Day
+Missed
+Empty Profile
+```
+
+This may be implemented using mocked state, localStorage, or a small developer preview control.
+
+The final student-facing UI should not feel like a testing tool.
+
+---
+
+# Screen 3 — Challenge Day `/day/12`
+
+This is the complete experience for one challenge day.
+
+The student should be able to understand the task without leaving the page.
+
+## Required Content
+
+Display:
+
+- Day number
+- Task title
 - Track
 - Difficulty
+- Estimated time
+- Task description
+- What needs to be built
 - Requirements/checklist
 - GitHub proof submission
 - LinkedIn proof submission
-- Submit button
-- Completion state
+- Submit/complete action
+- Completion status
 
-DESIGN:
+## Checklist
 
-Mobile-first.
+Allow the student to check off task requirements.
 
-The evaluator will view the website at exactly approximately 390px wide.
+Persist the mocked state locally if practical.
 
-The design must therefore be excellent at 390px before worrying about desktop.
+## Proof of Work
 
-Visual direction:
+Provide fields for:
 
-- dark premium interface
-- cyan/blue accent
-- strong typography
-- high contrast
-- clean spacing
-- subtle depth
-- polished cards
-- tasteful motion
-- coding/progress visual language
+```text
+GitHub repository / commit URL
+LinkedIn post URL
+```
 
-Avoid generic AI landing-page design.
+The interface should make it obvious that both are required proof-of-work signals.
+
+After submission:
+
+- Mark the day completed
+- Update streak/progress
+- Show a clear success state
+
+---
+
+# Design Requirements
+
+## Mobile First
+
+The judges will open the application at:
+
+```text
+390px width
+```
+
+Design for this first.
+
+Check:
+
+- No horizontal scrolling
+- No clipped text
+- No oversized desktop cards
+- Buttons remain easy to tap
+- Navigation remains usable
+- Cards fit naturally inside the viewport
+- Typography remains readable
+
+Desktop should be a secondary responsive layout.
+
+---
+
+# Navigation
+
+Use a simple navigation structure.
+
+Desktop:
+
+- ABTalks branding
+- Dashboard
+- Day 12
+
+Mobile:
+
+- Bottom navigation with:
+  - Home
+  - Dashboard
+  - Day 12
+
+Important:
+
+The landing page is `/`.
+
+Do not create a separate entry/loading page.
+
+The landing page itself is the required public first experience.
+
+The Home navigation item should point to `/`.
+
+---
+
+# Technical Requirements
+
+Use whatever frontend framework makes the implementation fastest and most reliable.
+
+A React + Vite + Tailwind CSS implementation is acceptable.
+
+Recommended tools:
+
+- React
+- React Router
+- Tailwind CSS
+- Framer Motion
+- Lucide React
+
+Use mocked data.
+
+No backend is required.
+
+No real authentication is required.
+
+No database is required.
+
+---
+
+# State Management
+
+Keep state simple.
+
+A custom hook using localStorage is sufficient.
+
+Example state shape:
+
+```js
+{
+  completedDays: [],
+  currentStreak: 0,
+  submissions: {},
+  checklists: {}
+}
+```
+
+The UI should derive:
+
+```text
+completedCount
+activeDay
+currentStreak
+```
+
+from the state instead of hardcoding everything independently.
+
+---
+
+# Data
+
+Create realistic challenge data.
+
+At minimum include Day 12.
+
+Example:
+
+```js
+{
+  dayNumber: 12,
+  title: "Build & Deploy Dynamic Dashboard UI",
+  track: "Full Stack Web Development",
+  difficulty: "Intermediate",
+  estimatedTime: "2.5 Hours",
+  description: "...",
+  requirements: [
+    "...",
+    "...",
+    "..."
+  ]
+}
+```
+
+Additional mocked days may be included for realism.
+
+---
+
+# Animation Rules
+
+Animations should communicate hierarchy and interaction.
+
+Good examples:
+
+- Hero entrance animation
+- Staggered section reveal
+- Subtle floating/3D visual
+- Progress bar animation
+- Streak pulse
+- Button hover/tap feedback
+- Checklist completion feedback
 
 Avoid:
-- excessive gradients
-- excessive glassmorphism
-- random blobs
-- stock illustrations
-- excessive rounded cards
-- unnecessary animations
-- visual clutter
 
-3D/depth is allowed, but keep it lightweight.
+- Constant large movements
+- Excessive particle effects
+- Slow animations that delay usability
+- Animations that cause layout shifts
+- Anything that makes the mobile UI feel unstable
 
-Use one memorable dimensional visual related to the 60-day journey, such as a dimensional "60" or "12".
+Performance and readability come first.
 
-Do not use heavy Three.js/WebGL unless genuinely necessary.
+---
 
-THOUGHTFUL UX:
+# Visual Quality Checklist
 
-Separate STREAK from PROGRESS.
+Before considering the project complete, verify:
 
-For example:
+- [ ] `/` looks compelling within the first viewport
+- [ ] The 60-day concept is immediately understandable
+- [ ] `/dashboard` clearly answers "What do I do today?"
+- [ ] `/day/12` contains the complete task workflow
+- [ ] GitHub proof can be entered
+- [ ] LinkedIn proof can be entered
+- [ ] Progress updates after completion
+- [ ] Active streak state works
+- [ ] First-day state works
+- [ ] Missed-day state works
+- [ ] Empty-profile state works
+- [ ] Dashboard achievements are visible
+- [ ] Today's Focus workflow is visible
+- [ ] No horizontal overflow at 390px
+- [ ] Buttons are comfortably tappable
+- [ ] No broken icons/imports
+- [ ] No console-breaking runtime errors
+- [ ] Production build succeeds
 
-Current streak: 0 days
+---
 
-Challenge progress: 12 / 60 days completed
+# Route Map
 
-If a student misses a day, communicate:
+The final submission must contain this exact route map:
 
-"Missed yesterday?
-Your streak paused, but your progress is still here."
+```text
+/
+/dashboard
+/day/12
+```
 
-The student should never feel that missing one day erased their entire journey.
+Keep these routes stable.
 
-TECHNICAL REQUIREMENTS:
+---
 
-Create this structure:
+# Final QA
 
-src/
-├── assets/
-├── components/
-│   ├── common/
-│   ├── dashboard/
-│   └── day/
-├── data/
-├── hooks/
-├── layouts/
-├── pages/
-├── routes/
-└── utils/
+Before submission:
 
-Keep mock data separate from UI.
+1. Run:
 
-Create reusable components instead of putting everything into one huge component.
+```bash
+npm run dev
+```
 
-IMPORTANT IMPLEMENTATION RULE:
+2. Test:
 
-Do NOT just explain the code.
+```text
+/
+ /dashboard
+ /day/12
+```
 
-Generate the actual files needed for the project.
+at 390px width.
 
-For each file, clearly label:
+3. Test all mock states:
 
-FILE: src/path/to/file.jsx
+```text
+Active
+First Day
+Missed
+Empty Profile
+```
 
-followed by the complete file contents.
+4. Return the demo to the normal Active state.
 
-Start with the foundation only:
+5. Run:
 
-1. Routing
-2. Folder structure
-3. Mock data
-4. Layout
-5. Basic versions of the three pages
+```bash
+npm run build
+```
 
-Do NOT spend time on final visual polish yet.
+6. Fix every build/runtime error.
 
-Make sure:
+7. Push the final source code to GitHub.
 
-- `/` works
-- `/dashboard` works
-- `/day/12` works
-- there are no missing imports
-- there are no undefined variables
-- the project can run with `npm run dev`
+8. Deploy the application.
 
-After generating the foundation, STOP.
+9. Test the three routes on the actual deployed URL.
 
-Do not generate the next visual redesign yet.
+10. Submit the repository, deployment URL, and Route Map.
 
-# PROMPT 4
-The ABTalks 60-Day Coding Challenge website is now functionally complete.
+---
 
-Do not modify:
-- routing
-- file structure
-- mock data
-- existing features
-- component architecture
+# Core Principle
 
-First, analyze the current UI and improve only the visual design.
+Do not build more features just to make the project bigger.
 
-Focus on:
-1. Making the landing page more impressive for hackathon judges.
-2. Adding a meaningful visual representation of the 60-day journey.
-3. Improving hierarchy, spacing, typography, and card designs.
-4. Making the dashboard feel like a developer progress platform instead of a normal admin dashboard.
-5. Improving mobile view at 390px width.
-
-Design direction:
-- Premium developer challenge platform
-- Dark futuristic theme
-- Cyan accent remains
-- Minimal but memorable
-- One strong depth/3D-inspired visual element only
-- Avoid excessive gradients and unnecessary decorations
-
-Add:
-- subtle Framer Motion animations
-- better hover states
-- better loading/transition feel
-
-Do not create new dependencies.
-Do not use external APIs.
-Keep the current functionality working.
-
-Modify only the necessary files and explain each change.
-
-# PROMPT 5 
-Analyze the ABTalks website as a first-time user.
-
-The current design looks polished but the purpose and user journey are not immediately clear.
-
-Improve the information hierarchy.
-
-Landing page should communicate within 5 seconds:
-
-1. What ABTalks is:
-"A 60-day coding challenge where developers build daily, submit proof, and create a public record of consistency."
-
-2. Who it is for:
-"Students and developers who want practical coding discipline and visible progress."
-
-3. What the user does:
-Step 1: Choose a learning track
-Step 2: Complete daily coding missions
-Step 3: Submit GitHub + LinkedIn proof
-Step 4: Build your developer identity
-
-Redesign the landing page flow:
-
-Section 1:
-- Clear hero headline explaining the product.
-- Strong CTA button.
-
-Section 2:
-- Explain the 60-day challenge journey visually.
-
-Section 3:
-- Simple 3-step or 4-step workflow.
-
-Section 4:
-- Show what users achieve (streak, portfolio, consistency).
-
-Do not add unnecessary sections.
-Keep mobile-first.
-Keep the dark futuristic developer theme.
-Keep existing routes and functionality.
-
-# PROMPT 6 
-Improve the DashboardPage UI/UX for the ABTalks 60-Day Coding Challenge.
-
-Do not change:
-- routes
-- data structure
-- existing state variants
-- functionality
-
-Goal:
-Transform the dashboard from a simple stats page into a developer challenge command center.
-
-Improve:
-
-1. Developer Profile Section:
-- Make it feel like a developer identity card.
-- Show:
-  - Name
-  - Track
-  - College
-  - Current streak
-  - Challenge day
-
-2. Progress Visualization:
-Replace the simple progress bar with a more engaging 60-day challenge tracker:
-- completed days
-- current day
-- upcoming days
-- clear visual progress
-
-3. Today's Mission:
-Make it the main focus of the page.
-Include:
-- Day number badge
-- Difficulty
-- Estimated time
-- Mission title
-- Clear "Continue Mission" CTA
-
-4. Achievements:
-Make badges feel more rewarding:
-- locked/unlocked states
-- better icons
-- progress feeling
-
-5. Mobile-first:
-The page must look excellent at 390px width.
-
-Design:
-- premium developer platform
-- dark theme
-- cyan accent
-- subtle Framer Motion animations
-- avoid unnecessary decoration
-
-Do not remove the State Mock testing buttons because evaluators need them.
-
-# Prompt 7
-The Dashboard UI is improved. Now make the experience more user-centered.
-
-Do not change routing, state logic, or existing functionality.
-
-Improve these areas:
-
-1. Reduce excessive developer-console terminology.
-Replace words like:
-- Matrix
-- Workspace
-- Visualizer
-
-with simpler product language.
-
-2. Make Today's Mission the strongest action area.
-A user should instantly know:
-"What do I need to do today?"
-
-Add a small checklist:
-- Build today's task
-- Commit code
-- Share progress
-
-3. Improve missed streak state UX.
-When streak is reset:
-- clearly explain what happened
-- reassure progress is saved
-- encourage restarting
-
-4. Add a small "Developer Proof" section showing:
-- GitHub commits
-- LinkedIn posts
-- Projects completed
-
-Use mock data only.
-
-Keep:
-- mobile-first design
-- dark theme
-- cyan accent
-- existing evaluator state switcher
-
-Do not add unnecessary animations or redesign everything.
-
-# PROMPT 8
-Improve the ChallengeDayPage.jsx functionality and UX.
-
-Goal:
-Make the Day 12 page feel like the actual workspace where a developer completes today's challenge.
-
-Requirements:
-
-1. Keep the existing dark cyan ABTalks design system.
-2. Keep the current task information:
-   - Day number
-   - Task title
-   - Track
-   - Difficulty
-   - Estimated time
-   - Description
-   - Requirements checklist
-
-3. Add a clear "Today's Mission Flow" section:
-   Step 1: Build the task
-   Step 2: Push code to GitHub
-   Step 3: Share progress on LinkedIn
-   Step 4: Submit proof
-
-4. Improve the submission area:
-   - Separate GitHub URL and LinkedIn URL inputs
-   - Add labels explaining what each link is for
-   - Add a strong "Submit Proof" button
-   - Show submitted success state after submission
-
-5. Connect submission with useStudentState:
-   - When proof is submitted:
-      * mark the current day as completed
-      * increase completed days count
-      * update streak
-      * save progress to localStorage
-
-6. After successful submission show:
-   "Day 12 Completed 🎉"
-   "Your streak continues"
-   and a button:
-   "Back to Dashboard"
-
-7. Keep the component responsive for mobile.
-
-Do not add unnecessary features. Focus on making the daily completion workflow clear and functional.
+The goal is:
+
+**A student sees the challenge → understands today's work → builds → submits proof → sees their progress → comes back tomorrow.**
+
+Every design decision should make that loop clearer, more motivating, and easier to complete on a phone.
